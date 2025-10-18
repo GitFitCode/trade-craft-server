@@ -210,3 +210,82 @@ Visit `/api/setup/status` after starting the server for real-time configuration 
 - **Production Monitoring**: Sentry integration for error tracking
 - **Health Checks**: Setup status endpoints for monitoring
 
+## 📋 Common Configuration Examples
+
+### Options Trading Focus (Recommended)
+```bash
+# Enable advanced options trading with Tradier
+USE_POLYGON_FOR_DATA=false
+USE_ALPACA_FOR_DATA=true
+USE_TRADIER_FOR_TRADING=true
+ENABLE_OPTIONS_TRADING=true
+OPTIONS_ONLY_MODE=true
+
+# Tradier credentials
+TRADIER_PAPER_ACCOUNT_NUMBER=your_account
+TRADIER_PAPER_ACCESS_TOKEN=your_token
+```
+
+### Comprehensive Trading Setup
+```bash
+# Use Polygon for premium data, Tradier for trading
+USE_POLYGON_FOR_DATA=true
+USE_ALPACA_FOR_DATA=false
+USE_TRADIER_FOR_TRADING=true
+ENABLE_OPTIONS_TRADING=true
+OPTIONS_ONLY_MODE=false
+
+# Provider credentials
+POLYGON_API_KEY=your_polygon_key
+TRADIER_PAPER_ACCOUNT_NUMBER=your_account
+TRADIER_PAPER_ACCESS_TOKEN=your_token
+```
+
+### Budget-Friendly Setup
+```bash
+# Use free Alpaca for both data and trading
+USE_POLYGON_FOR_DATA=false
+USE_ALPACA_FOR_DATA=true
+USE_TRADIER_FOR_TRADING=false
+ENABLE_OPTIONS_TRADING=false
+OPTIONS_ONLY_MODE=false
+
+# Alpaca credentials
+ALPACA_PAPER_API_KEY=your_api_key
+ALPACA_PAPER_API_SECRET=your_api_secret
+```
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+**Server won't start:**
+- Check MongoDB is running: `brew services start mongodb-community`
+- Verify Python 3.13+ is installed: `python --version`
+- Check for missing dependencies: `pip install -r requirements.txt`
+
+**API Authentication Errors:**
+- Visit `/api/setup/status` for specific guidance
+- Verify credentials are not placeholder values
+- Check provider documentation for correct format
+
+**WebSocket Connection Issues:**
+- Polygon WebSocket requires paid plan
+- Use `OPTIONS_ONLY_MODE=true` to disable WebSocket feeds
+- Check firewall settings for WebSocket connections
+
+**Options Trading Not Working:**
+- Ensure `ENABLE_OPTIONS_TRADING=true`
+- Use Tradier provider: `USE_TRADIER_FOR_TRADING=true`
+- Verify Tradier account has options permissions
+
+### Support Endpoints
+- **Setup Status**: `GET /api/setup/status` - Configuration guidance
+- **MongoDB Status**: `GET /api/setup/mongodb-status` - Database connection
+- **Health Check**: `GET /api/account/summary` - API connectivity test
+
+### Getting Help
+- Check the setup status endpoint first
+- Review the [CLAUDE.md](./CLAUDE.md) file for detailed troubleshooting
+- Ensure all environment variables are properly configured
+
