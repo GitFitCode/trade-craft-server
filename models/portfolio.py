@@ -1,44 +1,77 @@
 from datetime import datetime
 from connectors.alpaca.rest.client import alpaca_rest_client
 from connectors.tradier.rest.client import tradier_rest_client
+from config import get_trading_provider_status
 import pandas as pd
 
 
 class Portfolio:
     @staticmethod
     async def get_positions():
-        positions = tradier_rest_client.get_positions()
+        # Check if trading provider credentials are configured
+        is_configured, status_message = get_trading_provider_status()
+        if not is_configured:
+            return {
+                "error": "Trading provider not configured",
+                "message": status_message,
+                "positions": []
+            }
+        
+        try:
+            positions = tradier_rest_client.get_positions()
 
-        formatted_positions = []
+            formatted_positions = []
 
-        for position in positions:
-            formatted_positions.append({
-                "symbol": position.symbol,
-                "quantity": position.quantity,
-                "cost_basis": position.cost_basis,
-                "date_acquired": position.date_acquired
-            })
+            for position in positions:
+                formatted_positions.append({
+                    "symbol": position.symbol,
+                    "quantity": position.quantity,
+                    "cost_basis": position.cost_basis,
+                    "date_acquired": position.date_acquired
+                })
 
-        return formatted_positions
+            return formatted_positions
+        except Exception as e:
+            return {
+                "error": "API Error", 
+                "message": str(e),
+                "positions": []
+            }
 
     @staticmethod
     async def get_activities():
-        history = tradier_rest_client.get_history(type="trade")
-        print(history)
+        # Check if trading provider credentials are configured
+        is_configured, status_message = get_trading_provider_status()
+        if not is_configured:
+            return {
+                "error": "Trading provider not configured",
+                "message": status_message,
+                "activities": []
+            }
+        
+        try:
+            history = tradier_rest_client.get_history(type="trade")
+            print(history)
 
-        formatted_activities = []
+            formatted_activities = []
 
-        for event in history:
-            if event.activity_type == "trade":
-                formatted_activities.append({
-                    "price": event.trade.price,
-                    "quantity": event.trade.quantity,
-                    "symbol": event.trade.symbol,
-                    "transaction_time": event.date,
-                    "type": event.type
-                })
+            for event in history:
+                if event.activity_type == "trade":
+                    formatted_activities.append({
+                        "price": event.trade.price,
+                        "quantity": event.trade.quantity,
+                        "symbol": event.trade.symbol,
+                        "transaction_time": event.date,
+                        "type": event.type
+                    })
 
-        return formatted_activities
+            return formatted_activities
+        except Exception as e:
+            return {
+                "error": "API Error", 
+                "message": str(e),
+                "activities": []
+            }
 
     @staticmethod
     async def get_deposits():
@@ -59,21 +92,37 @@ class Portfolio:
 
     @staticmethod
     async def get_orders():
-        orders = tradier_rest_client.get_orders()
+        # Check if trading provider credentials are configured
+        is_configured, status_message = get_trading_provider_status()
+        if not is_configured:
+            return {
+                "error": "Trading provider not configured",
+                "message": status_message,
+                "orders": []
+            }
+        
+        try:
+            orders = tradier_rest_client.get_orders()
 
-        formatted_orders = []
+            formatted_orders = []
 
-        for order in orders:
-            formatted_orders.append({
-                "symbol": order.symbol,
-                "quantity": order.quantity,
-                "side": order.side,
-                "type": order.type,
-                "time_in_force": order.duration,
-                "limit_price": order.price,
-            })
+            for order in orders:
+                formatted_orders.append({
+                    "symbol": order.symbol,
+                    "quantity": order.quantity,
+                    "side": order.side,
+                    "type": order.type,
+                    "time_in_force": order.duration,
+                    "limit_price": order.price,
+                })
 
-        return formatted_orders
+            return formatted_orders
+        except Exception as e:
+            return {
+                "error": "API Error", 
+                "message": str(e),
+                "orders": []
+            }
 
     @staticmethod
     async def get_history():

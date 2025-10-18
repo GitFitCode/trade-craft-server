@@ -1,22 +1,17 @@
 from threading import Thread
 from alpaca.data.live import CryptoDataStream, StockDataStream
-from alpaca.data import DataFeed
-from alpaca_trade_api.rest import URL
+from alpaca.data.enums import DataFeed
 from config import config
 
 trading_mode = "PAPER"
 if config["ALPACA"]["ENABLE_LIVE_TRADING"]:
     trading_mode = "LIVE"
 
-base_url = URL(config["ALPACA"][trading_mode]["ENDPOINT"])
 api_key = config["ALPACA"][trading_mode]["API_KEY"]
 secret_key = config["ALPACA"][trading_mode]["SECRET_KEY"]
-data_feed = "sip"
 
 
 class AlpacaWebSocketClient:
-    _base_url = base_url
-
     def __init__(self):
         super().__init__()
         self._handle_trade = None
